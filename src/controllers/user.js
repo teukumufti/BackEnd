@@ -1,28 +1,13 @@
-const models = require("../../models");
-
-// add user
-exports.addUser = async (req, res) => {
-  try {
-    await models.User.creates(req.body);
-
-    res.status(201).send({
-      status: "Success",
-      message: "Add successfully",
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(401).send({
-      status: "Failed",
-      message: "Failed to add data",
-    });
-  }
-};
+const { User } = require("../../models");
 
 // get all user
 exports.getUsers = async (req, res) => {
   try {
-    const data = await models.User.findAll();
-
+    const data = await User.findAll({
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
+    });
     res.send({
       status: "Success",
       data: {
@@ -43,7 +28,12 @@ exports.getUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await models.User.findAll({ where: { id } });
+    const data = await User.findAll({
+      where: { id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "id"],
+      },
+    });
 
     res.send({
       status: "Success",
@@ -63,8 +53,11 @@ exports.updateUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await models.User.update(req.body, {
+    const data = await User.update(req.body, {
       where: { id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "id"],
+      },
     });
 
     res.send({
@@ -86,7 +79,7 @@ exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await models.User.destroy({
+    await User.destroy({
       where: { id },
     });
 

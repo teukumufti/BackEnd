@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+require("dotenv").config();
 // user
 const {
   getUsers,
@@ -28,12 +29,8 @@ const {
   deleteCategory,
 } = require("../controllers/category");
 
-//
-
-//register user
+//register login user
 router.post("/register", register);
-
-// login
 router.post("/login", login);
 
 //users
