@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      this.belongsTo(models.User, {
+        as: "user",
+        foreignKey: {
+          name: "idUser",
+        },
+      });
     }
   }
   Products.init(
@@ -21,8 +27,6 @@ module.exports = (sequelize, DataTypes) => {
       idUser: DataTypes.INTEGER,
     },
     {
-      createdAt: false,
-      updatedAt: false,
       sequelize,
       modelName: "Products",
     }

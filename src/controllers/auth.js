@@ -72,7 +72,7 @@ exports.login = async (req, res) => {
     const userExists = await User.findOne({
       where: { email: req.body.email },
       attributes: {
-        exclude: ["createdAt", "updatedAt", "id"],
+        exclude: ["createdAt", "updatedAt"],
       },
     });
     if (!userExists) {

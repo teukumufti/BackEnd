@@ -1,21 +1,35 @@
-const models = require("../../models");
+const { Products, User } = require("../../models/");
 
 // add user
 exports.addProduct = async (req, res) => {
   try {
-    const data = await models.Products.create(req.body);
+    const data = req.body;
+    console.log(data);
+    let newProduct = await Products.create({
+      ...data,
+      image: req.file.filename,
+      idUser: req.user.id,
+    });
 
-    res.status(201).send({
+    newProduct = JSON.parse(JSON.stringify(newProduct));
+
+    newProduct = {
+      ...newProduct,
+      image: process.env.FILE_PATH + newProduct.image,
+    };
+
+    res.status(200).send({
       status: "Success",
+      message: "Add Product Success",
       data: {
-        product: data,
+        newProduct,
       },
     });
   } catch (error) {
     console.log(error);
-    res.status(401).send({
-      status: "Failed",
-      message: "Failed to add data",
+    res.status(500).send({
+      status: "Add Product Failed",
+      message: "Server Error",
     });
   }
 };
@@ -23,7 +37,20 @@ exports.addProduct = async (req, res) => {
 // get all user
 exports.getProducts = async (req, res) => {
   try {
-    const data = await models.Products.findAll();
+    let data = await Products.findAll({
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: {
+            exclude: ["createdAt", "updatedAt", "idUser", "password"],
+          },
+        },
+      ],
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "idUser"],
+      },
+    });
 
     res.send({
       status: "Success",
@@ -35,7 +62,7 @@ exports.getProducts = async (req, res) => {
     console.log(error);
     res.status(401).send({
       status: "Failed",
-      message: "Failed to get user",
+      message: "Failed to get product",
     });
   }
 };
@@ -45,7 +72,12 @@ exports.getProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await models.Products.findAll({ where: { id } });
+    const data = await Products.findAll({
+      where: { id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "idUser"],
+      },
+    });
 
     res.send({
       status: "Success",
@@ -53,11 +85,20 @@ exports.getProduct = async (req, res) => {
         product: data,
       },
     });
+
+    data = JSON.parse(JSON.stringify(data));
+
+    data = data.map((item) => {
+      return {
+        ...item,
+        image: process.env.FILE_PATH + item.image,
+      };
+    });
   } catch (error) {
     console.log(error);
     res.status(401).send({
       status: "Failed",
-      message: "Failed to get id",
+      message: "Failed to get product id",
     });
   }
 };
@@ -67,8 +108,11 @@ exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await models.Products.update(req.body, {
+    const data = await Products.update(req.body, {
       where: { id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt"],
+      },
     });
 
     res.send({
@@ -82,7 +126,7 @@ exports.updateProduct = async (req, res) => {
     console.log(error);
     res.status(401).send({
       status: "Failed",
-      message: "Failed to update user",
+      message: "Failed to update product",
     });
   }
 };
@@ -92,7 +136,7 @@ exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await models.Products.destroy({
+    await Products.destroy({
       where: { id },
     });
 
@@ -106,7 +150,7 @@ exports.deleteProduct = async (req, res) => {
     console.log(error);
     res.status(401).send({
       status: "Failed",
-      message: "Failed to delete user",
+      message: "Failed to delete product",
     });
   }
 };

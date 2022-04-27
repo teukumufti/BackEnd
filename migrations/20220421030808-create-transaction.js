@@ -10,6 +10,12 @@ module.exports = {
       },
       idProducts: {
         type: Sequelize.INTEGER,
+        references: {
+          model: "Products",
+          key: "id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
       },
       idBuyer: {
         type: Sequelize.INTEGER,
@@ -31,6 +37,9 @@ module.exports = {
       },
       price: {
         type: Sequelize.INTEGER,
+      },
+      status: {
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,

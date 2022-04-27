@@ -1,19 +1,23 @@
-const models = require("../../models");
+const { Category } = require("../../models");
 
 // add user
 exports.addCategory = async (req, res) => {
   try {
-    const data = await models.Category.create(req.body);
+    let newCategory = await Category.create(req.body);
 
-    res.status(201).send({
+    res.status(200).send({
       status: "Success",
+      message: "Add Category Success",
       data: {
-        category: data,
+        category: {
+          id: newCategory.id,
+          name: newCategory.name,
+        },
       },
     });
   } catch (error) {
     console.log(error);
-    res.status(401).send({
+    res.status(500).send({
       status: "Failed",
       message: "Failed to add data",
     });
@@ -23,7 +27,11 @@ exports.addCategory = async (req, res) => {
 // get all user
 exports.getCategories = async (req, res) => {
   try {
-    const data = await models.Category.findAll();
+    const data = await Category.findAll({
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "idUser"],
+      },
+    });
 
     res.send({
       status: "Success",
@@ -45,7 +53,12 @@ exports.getCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await models.Category.findAll({ where: { id } });
+    const data = await Category.findAll({
+      where: { id },
+      attributes: {
+        exclude: ["createdAt", "updatedAt", "idUser"],
+      },
+    });
 
     res.send({
       status: "Success",
@@ -67,7 +80,7 @@ exports.updateCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const data = await models.Category.update(req.body, {
+    const data = await Category.update(req.body, {
       where: { id },
     });
 
@@ -75,7 +88,9 @@ exports.updateCategory = async (req, res) => {
       status: "Success",
       message: `Update user id : ${id} success`,
       data: {
-        category: data,
+        category: {
+          id: id,
+        },
       },
     });
   } catch (error) {
@@ -92,7 +107,7 @@ exports.deleteCategory = async (req, res) => {
   try {
     const { id } = req.params;
 
-    await models.Category.destroy({
+    await Category.destroy({
       where: { id },
     });
 

@@ -14,10 +14,9 @@ module.exports = (sequelize, DataTypes) => {
   Category.init(
     {
       name: DataTypes.STRING,
+      idUser: DataTypes.INTEGER,
     },
     {
-      createdAt: false,
-      updatedAt: false,
       sequelize,
       modelName: "Category",
     }

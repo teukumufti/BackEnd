@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 require("dotenv").config();
+const { auth } = require("../middlewares/auth");
+
 // user
 const {
   getUsers,
@@ -28,6 +30,12 @@ const {
   updateCategory,
   deleteCategory,
 } = require("../controllers/category");
+// transaction
+const { buyProducts, getTransactions } = require("../controllers/transaction");
+// uploadFile
+const { uploadFile } = require("../middlewares/uploadFile");
+
+//
 
 //register login user
 router.post("/register", register);
@@ -40,17 +48,21 @@ router.patch("/users/:id", updateUser);
 router.delete("/users/:id", deleteUser);
 
 // product
-router.post("/product", addProduct);
-router.get("/products", getProducts);
-router.get("/product/:id", getProduct);
-router.patch("/product/:id", updateProduct);
-router.delete("/product/:id", deleteProduct);
+router.post("/product", auth, uploadFile("image"), addProduct);
+router.get("/products", auth, getProducts);
+router.get("/product/:id", auth, getProduct);
+router.patch("/product/:id", auth, updateProduct);
+router.delete("/product/:id", auth, deleteProduct);
 
 // category
-router.post("/category", addCategory);
+router.post("/category", auth, addCategory);
 router.get("/categories", getCategories);
-router.get("/category/:id", getCategory);
-router.patch("/category/:id", updateCategory);
-router.delete("/category/:id", deleteCategory);
+router.get("/category/:id", auth, getCategory);
+router.patch("/category/:id", auth, updateCategory);
+router.delete("/category/:id", auth, deleteCategory);
+
+// transaction
+router.post("/transaction", auth, buyProducts);
+router.get("/transactions", auth, getTransactions);
 
 module.exports = router;
