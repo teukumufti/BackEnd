@@ -1,6 +1,6 @@
 const { Products, User } = require("../../models/");
 
-// add user
+// add product
 exports.addProduct = async (req, res) => {
   try {
     const data = req.body;
@@ -34,7 +34,7 @@ exports.addProduct = async (req, res) => {
   }
 };
 
-// get all user
+// get all product
 exports.getProducts = async (req, res) => {
   try {
     let data = await Products.findAll({
@@ -67,7 +67,7 @@ exports.getProducts = async (req, res) => {
   }
 };
 
-// get user by id
+// get product by id
 exports.getProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -103,7 +103,7 @@ exports.getProduct = async (req, res) => {
   }
 };
 
-// update User
+// update product
 exports.updateProduct = async (req, res) => {
   try {
     const { id } = req.params;
@@ -131,7 +131,7 @@ exports.updateProduct = async (req, res) => {
   }
 };
 
-//delete user
+//delete product
 exports.deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
